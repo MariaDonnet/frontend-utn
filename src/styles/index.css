@@ -1,0 +1,266 @@
+* {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.layout-header {
+  background: #111;
+  padding: 15px 0;
+}
+
+.layout-nav {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+}
+
+.layout-nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity .2s ease-in-out;
+}
+
+.layout-nav a:hover {
+  opacity: 0.6;
+}
+
+.layout-main {
+  min-height: 90vh;
+  padding: 30px;
+}
+
+.layout-footer {
+  background: #111;
+  color: #fff;
+  text-align: center;
+  padding: 12px 0;
+  margin-top: 30px;
+  font-size: 0.9rem;
+}
+
+.page-banner {
+  background: #eee;
+  padding: 30px;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.page-section {
+  padding: 20px;
+  max-width: 900px;
+  margin: auto;
+  line-height: 1.5rem;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+  padding: 20px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+.product-card {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.form-container {
+  max-width: 400px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-container input,
+.form-container select {
+  padding: 10px;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+}
+
+.form-container button {
+  padding: 10px;
+  border: none;
+  background: #333;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.center-auth {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.cont-btn {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.cont-btn button {
+  width: 48%;
+  padding: 5px;
+  border: none;
+  border-radius: 4px;
+  color: black;
+}
+
+.cont-btn button:first-child {
+  background-color: yellow;
+}
+
+.cont-btn button:last-child {
+  background-color: red;
+  color: white;
+}
+
+/* Styles popup */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-box {
+  background: #fff;
+  padding: 25px;
+  width: 400px;
+  max-width: 90%;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.close-btn {
+  margin-top: 10px;
+  background: #d33;
+  color: #fff;
+  padding: 10px;
+  width: 100%;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.card-actions button {
+  padding: 6px 10px;
+}
+
+/* Filter */
+
+.filters-section {
+  margin: 20px 0;
+  padding: 20px;
+  background: #f4f4f4;
+  border-radius: 10px;
+}
+
+.filters-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+}
+
+.filters-form input,
+.filters-form select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.filters-form button {
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #333;
+  color: #fff;
+}
+
+.filters-form button:hover {
+  background: #555;
+}
+
+/* Toast styles */
+
+.toast {
+  width: 300px;
+  padding: 10px 10px 20px 10px;
+  border-radius: 10px;
+  box-shadow: 0 10px 10px 0 #cccccc39;
+  color: white;
+  animation: slide 5s ease;
+  position: fixed;
+  right: 10px;
+}
+
+@keyframes slide {
+  0% {
+    bottom: 30px;
+  }
+
+  30% {
+    bottom: 40px;
+  }
+
+  100% {
+    display: none;
+  }
+}
+
+.contact-form {
+  max-width: 450px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.contact-form label {
+  font-weight: bold;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 10px;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.contact-form button {
+  padding: 12px;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.contact-form button:hover {
+  opacity: 0.8;
+}
