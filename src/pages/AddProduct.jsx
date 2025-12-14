@@ -1,7 +1,8 @@
-import { useState } from "react"
-import Layout from "../components/Layout"
-import { useAuth } from "../context/AuthContext"
-import { useNavigate } from "react-router-dom"
+import { useState } from "react";
+import Layout from "../components/Layout";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { apiFetch } from "../services/api";
 
 const AddProduct = () => {
   const [formData, setFormData] = useState({
@@ -10,113 +11,104 @@ const AddProduct = () => {
     price: "",
     stock: "",
     category: ""
-  })
+  });
 
-  const navigate = useNavigate()
-
-  const { token } = useAuth()
+  const { token } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     const dataToSend = {
       ...formData,
       price: Number(formData.price),
-      stock: Number(formData.stock),
-    }
-
-    console.log(token)
+      stock: Number(formData.stock)
+    };
 
     try {
-      const response = await fetch(`http://localhost:3000/products`, {
+      const response = await apiFetch("/products", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(dataToSend)
-      })
+      });
 
       if (!response.ok) {
-        alert("❌ Error al cargar el producto")
-        return
+        alert("❌ Error al cargar el producto");
+        return;
       }
 
-      alert("✅ Éxito al guardar el nuevo producto")
+      alert("✅ Producto creado correctamente");
       setFormData({
         name: "",
         description: "",
         price: "",
         stock: "",
         category: ""
-      })
-      navigate("/")
-    } catch (error) {
+      });
 
+      navigate("/");
+    } catch (error) {
+      alert("❌ Error de conexión con el servidor");
     }
-  }
+  };
 
   const handleChange = (e) => {
-    const nombreDeInput = e.target.name
-    setFormData({ ...formData, [nombreDeInput]: e.target.value })
-  }
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   return (
     <Layout>
       <div className="page-banner">Agregar Nuevo Producto</div>
 
       <section className="page-section">
-        <form className="form-container"
-          onSubmit={(e) => handleSubmit(e)}
-        >
+        <form className="form-container" onSubmit={handleSubmit}>
           <input
             type="text"
             placeholder="Nombre"
             name="name"
-            minLength={3}
-            maxLength={20}
-            onChange={(e) => handleChange(e)}
             value={formData.name}
+            onChange={handleChange}
           />
+
           <input
             type="text"
             placeholder="Descripción"
             name="description"
-            minLength={3}
-            maxLength={200}
-            onChange={(e) => handleChange(e)}
             value={formData.description}
+            onChange={handleChange}
           />
+
           <input
             type="number"
             placeholder="Precio"
             name="price"
-            min={0}
-            onChange={(e) => handleChange(e)}
             value={formData.price}
+            onChange={handleChange}
           />
+
           <input
             type="number"
             placeholder="Stock"
             name="stock"
-            min={0}
-            onChange={(e) => handleChange(e)}
             value={formData.stock}
+            onChange={handleChange}
           />
+
           <input
             type="text"
             placeholder="Categoría"
             name="category"
-            minLength={3}
-            maxLength={20}
-            onChange={(e) => handleChange(e)}
             value={formData.category}
+            onChange={handleChange}
           />
+
           <button type="submit">Agregar</button>
         </form>
       </section>
     </Layout>
-  )
-}
+  );
+};
 
-export default AddProduct
+export default AddProduct;
