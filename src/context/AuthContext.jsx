@@ -1,37 +1,30 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react"
 
 const AuthContext = createContext()
 
-// user -> true | false
-// login() -> setUser(true)
-// logout() -> setUser(false)
+export const AuthProvider = ({ children }) => {
+  const [token, setToken] = useState(null)
+  const [user, setUser] = useState(null)
 
-const decodeJWT = (token) => {
-  try {
-    const base64Payload = token.split(".")[1];
-    const payload = atob(base64Payload.replace(/-/g, "+").replace(/_/g, "/"));
-    return JSON.parse(payload);
-  } catch (error) {
-    return null;
-  }
-};
+  // 🔹 cargar token al iniciar la app
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token")
+    if (storedToken) {
+      setToken(storedToken)
+      setUser({ token: storedToken }) // opcional
+    }
+  }, [])
 
-
-const AuthProvider = ({ children }) => {
-  const savedToken = sessionStorage.getItem("token")
-  const [token, setToken] = useState(savedToken || null)
-  // 1 - ✅ si tengo token tengo usuario
-  // 2 - descifrar el payload del token
-  const [user, setUser] = useState(() => savedToken ? decodeJWT(savedToken) : null)
-
-  const login = (token) => {
-    sessionStorage.setItem("token", token)
-    setToken(token)
-    setUser(decodeJWT(token))
+  // 🔹 login
+  const login = (newToken) => {
+    localStorage.setItem("token", newToken)
+    setToken(newToken)
+    setUser({ token: newToken })
   }
 
+  // 🔹 logout
   const logout = () => {
-    sessionStorage.removeItem("token")
+    localStorage.removeItem("token")
     setToken(null)
     setUser(null)
   }
@@ -43,7 +36,4 @@ const AuthProvider = ({ children }) => {
   )
 }
 
-// custom hook
-const useAuth = () => useContext(AuthContext)
-
-export { AuthProvider, useAuth }
+export const useAuth = () => useContext(AuthContext)

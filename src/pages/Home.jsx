@@ -31,34 +31,21 @@ const Home = () => {
 
   const fetchingProducts = async (query = "") => {
     setResponseServer(initialResponseState);
-
     try {
       const response = await apiFetch(`/products?${query}`);
-
-      if (!response.ok) {
-        throw new Error("Error al obtener productos");
-      }
-
       const dataProducts = await response.json();
 
       setProducts(dataProducts.data.reverse());
       setResponseServer({
         success: true,
         notification: "Éxito al cargar los productos",
-        error: {
-          fetch: false,
-          delete: null,
-        },
+        error: { fetch: true, delete: null },
       });
     } catch (error) {
-      console.error(error);
       setResponseServer({
         success: false,
         notification: "Error al traer los datos",
-        error: {
-          fetch: true,
-          delete: null,
-        },
+        error: { fetch: false, delete: null },
       });
     }
   };
@@ -87,14 +74,10 @@ const Home = () => {
       setProducts(products.filter((p) => p._id !== idProduct));
       alert(`${dataResponse.data.name} borrado con éxito.`);
     } catch (error) {
-      console.error(error);
       setResponseServer({
         success: false,
         notification: "Error al borrar el producto",
-        error: {
-          fetch: false,
-          delete: true,
-        },
+        error: { fetch: true, delete: true },
       });
     }
   };
@@ -162,7 +145,11 @@ const Home = () => {
             onChange={handleChange}
             value={filters.stock}
           />
-          <select name="category" onChange={handleChange} value={filters.category}>
+          <select
+            name="category"
+            onChange={handleChange}
+            value={filters.category}
+          >
             <option value="">Todas las categorías</option>
             {CATEGORIES.map((category) => (
               <option key={category.id} value={category.value}>
@@ -217,7 +204,7 @@ const Home = () => {
         ))}
       </section>
 
-      {responseServer.error.fetch && (
+      {responseServer.error.fetch === false && (
         <ToastMessage color="red" msg={responseServer.notification} />
       )}
 
@@ -229,4 +216,3 @@ const Home = () => {
 };
 
 export default Home;
-

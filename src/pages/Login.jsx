@@ -11,7 +11,7 @@ const Login = () => {
   });
 
   const { login } = useAuth();
-  const navigateUser = useNavigate();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -26,24 +26,19 @@ const Login = () => {
     try {
       const response = await apiFetch("/auth/login", {
         method: "POST",
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
+        body: JSON.stringify(formData),
       });
 
-      const responseData = await response.json();
+      const data = await response.json();
 
       if (!response.ok) {
-        alert(responseData.error || "Error al iniciar sesión");
+        alert(data.error || "Error al iniciar sesión");
         return;
       }
 
-      // login exitoso
-      login(responseData.token);
-      navigateUser("/");
+      login(data.token);
+      navigate("/");
     } catch (error) {
-      console.log("Error de login:", error);
       alert("Error de conexión con el servidor");
     }
   };
@@ -53,25 +48,8 @@ const Login = () => {
       <div className="center-auth">
         <form className="form-container" onSubmit={handleSubmit}>
           <h3>Iniciar Sesión</h3>
-
-          <input
-            type="email"
-            placeholder="Email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-
-          <input
-            type="password"
-            placeholder="Contraseña"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-
+          <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
+          <input type="password" name="password" placeholder="Contraseña" onChange={handleChange} required />
           <button type="submit">Ingresar</button>
         </form>
       </div>
