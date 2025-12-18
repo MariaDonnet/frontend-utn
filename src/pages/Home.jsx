@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import UpdateProduct from "../components/UpdateProduct";
 import { useAuth } from "../context/AuthContext";
-import { CATEGORIES } from "../constants/categories.js";
-import { ToastMessage } from "../components/ToastMessage.jsx";
+import { CATEGORIES } from "../constants/categories";
+import { ToastMessage } from "../components/ToastMessage";
 import { apiFetch } from "../services/api";
 
 const Home = () => {
@@ -18,35 +18,42 @@ const Home = () => {
 
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   const [filters, setFilters] = useState({
     name: "",
-    stock: 0,
+    stock: "",
     category: "",
-    minPrice: 0,
-    maxPrice: 0,
+    minPrice: "",
+    maxPrice: "",
   });
+
   const [responseServer, setResponseServer] = useState(initialResponseState);
 
   const { user, token } = useAuth();
 
   const fetchingProducts = async (query = "") => {
+    setLoading(true);
     setResponseServer(initialResponseState);
+
     try {
       const response = await apiFetch(`/products?${query}`);
-      const dataProducts = await response.json();
+      const data = await response.json();
 
-      setProducts(dataProducts.data.reverse());
+      setProducts(data.data || []);
       setResponseServer({
         success: true,
-        notification: "Éxito al cargar los productos",
-        error: { fetch: true, delete: null },
+        notification: "Productos cargados correctamente",
+        error: { fetch: false, delete: null },
       });
     } catch (error) {
       setResponseServer({
         success: false,
-        notification: "Error al traer los datos",
-        error: { fetch: false, delete: null },
+        notification: "Error al cargar los productos",
+        error: { fetch: true, delete: null },
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -54,31 +61,27 @@ const Home = () => {
     fetchingProducts();
   }, []);
 
-  const deleteProduct = async (idProduct) => {
+  const deleteProduct = async (id) => {
     if (!confirm("¿Está seguro de que desea borrar el producto?")) return;
 
     try {
-      const response = await apiFetch(`/products/${idProduct}`, {
+      const response = await apiFetch(`/products/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      const dataResponse = await response.json();
+      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(dataResponse.error || "Error al borrar el producto");
+        alert(data.error || "Error al borrar el producto");
+        return;
       }
 
-      setProducts(products.filter((p) => p._id !== idProduct));
-      alert(`${dataResponse.data.name} borrado con éxito.`);
+      setProducts((prev) => prev.filter((p) => p._id !== id));
     } catch (error) {
-      setResponseServer({
-        success: false,
-        notification: "Error al borrar el producto",
-        error: { fetch: true, delete: true },
-      });
+      alert("Error de conexión con el servidor");
     }
   };
 
@@ -98,11 +101,9 @@ const Home = () => {
 
     const query = new URLSearchParams();
 
-    if (filters.name) query.append("name", filters.name);
-    if (filters.stock) query.append("stock", filters.stock);
-    if (filters.category) query.append("category", filters.category);
-    if (filters.minPrice) query.append("minPrice", filters.minPrice);
-    if (filters.maxPrice) query.append("maxPrice", filters.maxPrice);
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) query.append(key, value);
+    });
 
     fetchingProducts(query.toString());
   };
@@ -110,10 +111,10 @@ const Home = () => {
   const handleResetFilters = () => {
     setFilters({
       name: "",
-      stock: 0,
+      stock: "",
       category: "",
-      minPrice: 0,
-      maxPrice: 0,
+      minPrice: "",
+      maxPrice: "",
     });
     fetchingProducts();
   };
@@ -123,32 +124,39 @@ const Home = () => {
       <div className="page-banner">Nuestros Productos</div>
 
       <section className="page-section">
-        <p>
-          Bienvenido {user && user.id} a nuestra tienda. Aquí encontrarás una amplia
-          variedad de productos diseñados para satisfacer tus necesidades.
-        </p>
+        {user ? (
+          <p>
+            Bienvenido <strong>{user.email}</strong>.  
+            Podés gestionar los productos desde esta sección.
+          </p>
+        ) : (
+          <p>Explorá nuestro catálogo de productos disponibles.</p>
+        )}
       </section>
 
-      <section>
+      {/* FILTROS */}
+      <section className="filters-section">
         <form className="filters-form" onSubmit={handleSubmit}>
           <input
             type="text"
             name="name"
             placeholder="Buscar por nombre"
-            onChange={handleChange}
             value={filters.name}
+            onChange={handleChange}
           />
+
           <input
             type="number"
             name="stock"
-            placeholder="Ingrese el stock"
-            onChange={handleChange}
+            placeholder="Stock"
             value={filters.stock}
+            onChange={handleChange}
           />
+
           <select
             name="category"
-            onChange={handleChange}
             value={filters.category}
+            onChange={handleChange}
           >
             <option value="">Todas las categorías</option>
             {CATEGORIES.map((category) => (
@@ -157,27 +165,31 @@ const Home = () => {
               </option>
             ))}
           </select>
+
           <input
             type="number"
             name="minPrice"
             placeholder="Precio mínimo"
-            onChange={handleChange}
             value={filters.minPrice}
+            onChange={handleChange}
           />
+
           <input
             type="number"
             name="maxPrice"
             placeholder="Precio máximo"
-            onChange={handleChange}
             value={filters.maxPrice}
+            onChange={handleChange}
           />
+
           <button type="submit">Aplicar filtros</button>
           <button type="button" onClick={handleResetFilters}>
-            Cancelar
+            Limpiar
           </button>
         </form>
       </section>
 
+      {/* MODAL UPDATE */}
       {selectedProduct && (
         <UpdateProduct
           product={selectedProduct}
@@ -186,30 +198,49 @@ const Home = () => {
         />
       )}
 
+      {/* LISTADO */}
       <section className="products-grid">
-        {products.map((p) => (
-          <div key={p._id} className="product-card">
-            <h3>{p.name}</h3>
-            <p>{p.description}</p>
-            <p><strong>Precio:</strong> ${p.price}</p>
-            <p><strong>Stock:</strong> {p.stock}</p>
-            <p><strong>Categoría:</strong> {p.category}</p>
-            {user && (
-              <div className="cont-btn">
-                <button onClick={() => handleUpdateProduct(p)}>Actualizar</button>
-                <button onClick={() => deleteProduct(p._id)}>Borrar</button>
-              </div>
-            )}
-          </div>
-        ))}
-      </section>
+        {loading && <p>Cargando productos...</p>}
 
-      {responseServer.error.fetch === false && (
-        <ToastMessage color="red" msg={responseServer.notification} />
-      )}
+        {!loading && products.length === 0 && (
+          <p>No hay productos para mostrar.</p>
+        )}
+
+        {!loading &&
+          products.map((p) => (
+            <div key={p._id} className="product-card">
+              <h3>{p.name}</h3>
+              <p>{p.description}</p>
+              <p>
+                <strong>Precio:</strong> ${p.price}
+              </p>
+              <p>
+                <strong>Stock:</strong> {p.stock}
+              </p>
+              <p>
+                <strong>Categoría:</strong> {p.category}
+              </p>
+
+              {user && (
+                <div className="cont-btn">
+                  <button onClick={() => handleUpdateProduct(p)}>
+                    Actualizar
+                  </button>
+                  <button onClick={() => deleteProduct(p._id)}>
+                    Borrar
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+      </section>
 
       {responseServer.success && (
         <ToastMessage color="green" msg={responseServer.notification} />
+      )}
+
+      {responseServer.error.fetch && (
+        <ToastMessage color="red" msg={responseServer.notification} />
       )}
     </Layout>
   );

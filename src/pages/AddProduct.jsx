@@ -3,6 +3,7 @@ import Layout from "../components/Layout";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../services/api";
+import { ToastMessage } from "../components/ToastMessage";
 
 const AddProduct = () => {
   const [formData, setFormData] = useState({
@@ -10,8 +11,16 @@ const AddProduct = () => {
     description: "",
     price: "",
     stock: "",
-    category: ""
+    category: "",
   });
+
+  const [toast, setToast] = useState({
+    show: false,
+    msg: "",
+    color: "",
+  });
+
+  const [loading, setLoading] = useState(false);
 
   const { token } = useAuth();
   const navigate = useNavigate();
@@ -19,14 +28,22 @@ const AddProduct = () => {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
+  };
+
+  const showToast = (msg, color = "green") => {
+    setToast({ show: true, msg, color });
+    setTimeout(() => {
+      setToast({ show: false, msg: "", color: "" });
+    }, 3000);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    // 👉 FormData (CLAVE)
+    // 🔑 FormData (necesario para multer)
     const formDataToSend = new FormData();
     formDataToSend.append("name", formData.name);
     formDataToSend.append("description", formData.description);
@@ -39,23 +56,28 @@ const AddProduct = () => {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
-          // ❌ NO Content-Type
+          // ❌ NO Content-Type (multipart)
         },
-        body: formDataToSend
+        body: formDataToSend,
       });
 
       const data = await response.json();
 
       if (!response.ok || data.success === false) {
-        alert(data.error || "Error al crear el producto");
+        showToast(data.error || "Error al crear el producto", "red");
         return;
       }
 
-      alert("✅ Producto creado correctamente");
-      navigate("/");
+      showToast("Producto creado correctamente", "green");
+
+      setTimeout(() => {
+        navigate("/");
+      }, 1200);
     } catch (error) {
       console.error(error);
-      alert("❌ Error de conexión con el servidor");
+      showToast("Error de conexión con el servidor", "red");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -112,9 +134,15 @@ const AddProduct = () => {
             value={formData.category}
           />
 
-          <button type="submit">Agregar</button>
+          <button type="submit" disabled={loading}>
+            {loading ? "Guardando..." : "Agregar"}
+          </button>
         </form>
       </section>
+
+      {toast.show && (
+        <ToastMessage msg={toast.msg} color={toast.color} />
+      )}
     </Layout>
   );
 };

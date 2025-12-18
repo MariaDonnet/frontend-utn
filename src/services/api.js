@@ -1,13 +1,23 @@
-const BASE_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export const apiFetch = async (endpoint, options = {}) => {
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-    ...options,
+  const token = localStorage.getItem("token");
+
+  const headers = {
+    ...(options.headers || {}),
   };
 
-  return fetch(`${BASE_URL}${endpoint}`, config);
+  if (!(options.body instanceof FormData)) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  return fetch(`${API_URL}${endpoint}`, {
+    ...options,
+    headers,
+  });
 };
+

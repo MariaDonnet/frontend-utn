@@ -1,138 +1,227 @@
 * {
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+    "Helvetica Neue", sans-serif;
+  background-color: #fafafa;
+  color: #111;
+  line-height: 1.5;
+}
+
+/* ================= Layout ================= */
+
 .layout-header {
   background: #111;
-  padding: 15px 0;
+  padding: 16px 0;
 }
 
 .layout-nav {
   display: flex;
   justify-content: center;
-  gap: 25px;
+  gap: 28px;
 }
 
 .layout-nav a {
   color: #fff;
   text-decoration: none;
   font-weight: 500;
-  transition: opacity .2s ease-in-out;
+  transition: opacity 0.2s ease;
 }
 
 .layout-nav a:hover {
-  opacity: 0.6;
+  opacity: 0.7;
 }
 
 .layout-main {
   min-height: 90vh;
-  padding: 30px;
+  padding: 32px 20px;
 }
 
 .layout-footer {
   background: #111;
   color: #fff;
   text-align: center;
-  padding: 12px 0;
-  margin-top: 30px;
+  padding: 14px 0;
+  margin-top: 40px;
   font-size: 0.9rem;
 }
 
+/* ================= Pages ================= */
+
 .page-banner {
-  background: #eee;
+  background: #f1f1f1;
   padding: 30px;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   font-size: 1.8rem;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .page-section {
   padding: 20px;
   max-width: 900px;
   margin: auto;
-  line-height: 1.5rem;
 }
+
+/* ================= Products ================= */
 
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
   padding: 20px;
   max-width: 1100px;
   margin: auto;
 }
 
 .product-card {
-  border: 1px solid #ddd;
-  padding: 15px;
-  border-radius: 5px;
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid #e5e5e5;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.form-container {
-  max-width: 400px;
-  margin: auto;
+.product-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* ================= Buttons ================= */
+
+button {
+  border: none;
+  border-radius: 6px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ================= Forms ================= */
+
+.form-container,
+.contact-form {
+  max-width: 420px;
+  margin: 40px auto;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+  background: #fff;
+  padding: 30px 25px;
+  border-radius: 12px;
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+}
+
+.form-container h3 {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+/* 🔑 FIX CONTACT FORM ALIGNMENT */
+.contact-form div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.contact-form label {
+  font-weight: 600;
+  font-size: 0.95rem;
 }
 
 .form-container input,
-.form-container select {
+.form-container select,
+.filters-form input,
+.filters-form select,
+.contact-form input,
+.contact-form textarea {
   padding: 10px;
-  border: 1px solid #bbb;
-  border-radius: 5px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+  width: 100%;
 }
 
-.form-container button {
-  padding: 10px;
-  border: none;
-  background: #333;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
+.contact-form textarea {
+  resize: vertical;
 }
+
+.form-container input:focus,
+.form-container select:focus,
+.filters-form input:focus,
+.filters-form select:focus,
+.contact-form input:focus,
+.contact-form textarea:focus {
+  outline: none;
+  border-color: #111;
+}
+
+.form-container button,
+.filters-form button,
+.contact-form button {
+  background: #111;
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+.form-container button:hover,
+.filters-form button:hover,
+.contact-form button:hover {
+  background: #333;
+}
+
+/* ================= Auth ================= */
 
 .center-auth {
   display: flex;
   justify-content: center;
-  margin-top: 40px;
+  align-items: center;
+  margin-top: 60px;
 }
+
+/* ================= Product actions ================= */
 
 .cont-btn {
   display: flex;
   justify-content: space-between;
-  margin-top: 10px;
+  margin-top: 12px;
+  gap: 8px;
 }
 
 .cont-btn button {
-  width: 48%;
-  padding: 5px;
-  border: none;
-  border-radius: 4px;
-  color: black;
+  flex: 1;
+  font-size: 0.85rem;
 }
 
 .cont-btn button:first-child {
-  background-color: yellow;
+  background-color: #facc15;
+  color: #111;
 }
 
 .cont-btn button:last-child {
-  background-color: red;
-  color: white;
+  background-color: #dc2626;
+  color: #fff;
 }
 
-/* Styles popup */
+/* ================= Modal ================= */
 
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
@@ -141,39 +230,26 @@
 
 .modal-box {
   background: #fff;
-  padding: 25px;
+  padding: 24px;
   width: 400px;
   max-width: 90%;
   border-radius: 8px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.25);
 }
 
 .close-btn {
-  margin-top: 10px;
-  background: #d33;
+  margin-top: 12px;
+  background: #dc2626;
   color: #fff;
-  padding: 10px;
   width: 100%;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
 }
 
-.card-actions {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-}
-
-.card-actions button {
-  padding: 6px 10px;
-}
-
-/* Filter */
+/* ================= Filters ================= */
 
 .filters-section {
-  margin: 20px 0;
+  margin: 30px auto;
   padding: 20px;
+  max-width: 900px;
   background: #f4f4f4;
   border-radius: 10px;
 }
@@ -184,83 +260,59 @@
   gap: 15px;
 }
 
-.filters-form input,
-.filters-form select {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-.filters-form button {
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  background: #333;
-  color: #fff;
-}
-
-.filters-form button:hover {
-  background: #555;
-}
-
-/* Toast styles */
+/* ================= Toast ================= */
 
 .toast {
-  width: 300px;
-  padding: 10px 10px 20px 10px;
+  width: 280px;
+  padding: 14px;
   border-radius: 10px;
-  box-shadow: 0 10px 10px 0 #cccccc39;
-  color: white;
-  animation: slide 5s ease;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  color: #fff;
   position: fixed;
-  right: 10px;
+  right: 16px;
+  bottom: 30px;
+  animation: slide 5s ease forwards;
 }
 
 @keyframes slide {
   0% {
-    bottom: 30px;
+    opacity: 0;
+    transform: translateY(20px);
   }
-
-  30% {
-    bottom: 40px;
+  10%,
+  90% {
+    opacity: 1;
+    transform: translateY(0);
   }
-
   100% {
-    display: none;
+    opacity: 0;
   }
 }
 
-.contact-form {
-  max-width: 450px;
-  margin: 20px auto;
+/* ================= About ================= */
+
+.about-section {
+  max-width: 900px;
+  margin: auto;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 24px;
 }
 
-.contact-form label {
-  font-weight: bold;
+.about-card {
+  background: #fff;
+  padding: 24px;
+  border-radius: 10px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
 }
 
-.contact-form input,
-.contact-form textarea {
-  padding: 10px;
-  border: 1px solid #bbb;
-  border-radius: 5px;
-  width: 100%;
+.about-card h2 {
+  margin-bottom: 10px;
+  font-size: 1.4rem;
+  font-weight: 600;
 }
 
-.contact-form button {
-  padding: 12px;
-  background: #111;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.contact-form button:hover {
-  opacity: 0.8;
+.about-card p {
+  color: #444;
+  line-height: 1.6;
 }

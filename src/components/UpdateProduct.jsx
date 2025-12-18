@@ -1,95 +1,106 @@
-import { useState } from "react"
-import { useAuth } from "../context/AuthContext"
+import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../services/api";
+import { ToastMessage } from "./ToastMessage";
 
 const UpdateProduct = ({ product, onClose, onUpdate }) => {
-  const [loader, setLoader] = useState(false)
-  const [formData, setFormData] = useState({
-    name: product.name,
-    description: product.description,
-    stock: Number(product.stock),
-    price: Number(product.price),
-    category: product.category
-  })
+  const { token } = useAuth();
 
-  const { token } = useAuth()
+  const [formData, setFormData] = useState({
+    name: product.name || "",
+    description: product.description || "",
+    price: product.price || "",
+    stock: product.stock || "",
+    category: product.category || "",
+  });
+
+  const [toast, setToast] = useState({
+    show: false,
+    msg: "",
+    color: "",
+  });
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    const dataToUpdate = {
+    const dataToSend = {
       ...formData,
       price: Number(formData.price),
-      stock: Number(formData.stock)
-    }
+      stock: Number(formData.stock),
+    };
 
     try {
-      setLoader(true)
-      const response = await fetch(`http://localhost:3000/products/${product._id}`, {
+      const response = await apiFetch(`/products/${product._id}`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(dataToUpdate)
-      })
+        body: JSON.stringify(dataToSend),
+      });
 
-      onUpdate()
-      onClose()
+      const data = await response.json();
+
+      if (!response.ok) {
+        setToast({
+          show: true,
+          msg: data.error || "Error al actualizar el producto",
+          color: "red",
+        });
+        return;
+      }
+
+      setToast({
+        show: true,
+        msg: "Producto actualizado correctamente",
+        color: "green",
+      });
+
+      setTimeout(() => {
+        onUpdate();
+        onClose();
+      }, 1000);
     } catch (error) {
-      console.log("Error al actualizar el objeto :(")
+      setToast({
+        show: true,
+        msg: "Error de conexión con el servidor",
+        color: "red",
+      });
     } finally {
-      setLoader(false)
+      setTimeout(() => {
+        setToast({ show: false, msg: "", color: "" });
+      }, 3000);
     }
-  }
+  };
 
   return (
-    <section className="modal-overlay">
+    <div className="modal-overlay">
       <div className="modal-box">
         <h2>Editar producto</h2>
-        <form className="form-container" onSubmit={handleSubmit}>
-          <input
-            name="name"
-            type="text"
-            value={formData.name}
-            onChange={handleChange}
-          />
-          <input
-            name="description"
-            type="text"
-            value={formData.description}
-            onChange={handleChange}
-          />
-          <input
-            name="price"
-            type="number"
-            value={formData.price}
-            onChange={handleChange}
-          />
-          <input
-            name="stock"
-            type="number"
-            value={formData.stock}
-            onChange={handleChange}
-          />
-          <input
-            name="category"
-            type="text"
-            value={formData.category}
-            onChange={handleChange}
-          />
-          <button type="submit">{loader ? "Enviando..." : "Enviar"}</button>
-        </form>
-        <button className="close-btn" type="button" onClick={onClose}>Cancelar</button>
-      </div>
-    </section>
-  )
-}
 
-export default UpdateProduct
+        <form className="form-container" onSubmit={handleSubmit}>
+          <input name="name" value={formData.name} onChange={handleChange} />
+          <input name="description" value={formData.description} onChange={handleChange} />
+          <input type="number" name="price" value={formData.price} onChange={handleChange} />
+          <input type="number" name="stock" value={formData.stock} onChange={handleChange} />
+          <input name="category" value={formData.category} onChange={handleChange} />
+
+          <button type="submit">Guardar</button>
+        </form>
+
+        <button className="close-btn" onClick={onClose}>
+          Cancelar
+        </button>
+
+        {toast.show && (
+          <ToastMessage msg={toast.msg} color={toast.color} />
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default UpdateProduct;
